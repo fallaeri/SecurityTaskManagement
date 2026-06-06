@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}{{ task.title }} — SecureTask{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h1>{{ task.title }}</h1>
+  <p>Created {{ task.created_at|date:"M d, Y" }}</p>
+</div>
+<div class="content-card" style="max-width:640px">
+  <div class="p-4">
+    <div class="row g-3 mb-4">
+      <div class="col-auto">
+        <span class="badge rounded-pill badge-{{ task.priority }} px-3 py-2">{{ task.get_priority_display }}</span>
+      </div>
+      <div class="col-auto">
+        <span class="badge rounded-pill badge-status px-3 py-2">{{ task.get_status_display }}</span>
+      </div>
+      {% if task.due_date %}
+      <div class="col-auto"><span class="badge bg-light text-dark border px-3 py-2"><i class="bi bi-calendar me-1"></i>{{ task.due_date }}</span></div>
+      {% endif %}
+    </div>
+    {% if task.description %}
+    <p class="text-secondary">{{ task.description }}</p>
+    {% else %}
+    <p class="text-muted fst-italic">No description.</p>
+    {% endif %}
+    <div class="d-flex gap-2 mt-4">
+      <a href="{% url 'task_update' task.pk %}" class="btn btn-primary">Edit</a>
+      <a href="{% url 'task_delete' task.pk %}" class="btn btn-outline-danger">Delete</a>
+      <a href="{% url 'task_list' %}" class="btn btn-outline-secondary">Back</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

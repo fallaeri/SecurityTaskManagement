@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}Profile — SecureTask{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h1><i class="bi bi-person-circle me-2 text-primary"></i>My Profile</h1>
+</div>
+<div class="row g-4">
+  <div class="col-md-4">
+    <div class="content-card p-4 text-center">
+      <div class="avatar mx-auto mb-3" style="width:72px;height:72px;border-radius:50%;background:#0d6efd;color:#fff;display:grid;place-items:center;font-size:1.8rem;font-weight:800">
+        {{ user.username|first|upper }}
+      </div>
+      <h5 class="fw-bold mb-0">{{ user.get_full_name|default:user.username }}</h5>
+      <span class="badge mt-2 {% if profile.role == 'admin' %}bg-danger{% else %}bg-primary{% endif %} rounded-pill px-3">
+        {{ profile.role|capfirst }}
+      </span>
+      <hr class="my-3">
+      <div class="text-start small text-muted">
+        <div class="mb-1"><i class="bi bi-envelope me-2"></i>{{ user.email|default:"No email" }}</div>
+        <div class="mb-1"><i class="bi bi-calendar me-2"></i>Joined {{ user.date_joined|date:"M Y" }}</div>
+        <div><i class="bi bi-check2-square me-2"></i>{{ user.tasks.count }} tasks</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-8">
+    <div class="content-card">
+      <div class="content-card-header"><h5>Edit Profile</h5></div>
+      <div class="p-4">
+        <form method="post" novalidate>
+          {% csrf_token %}
+          <div class="row g-3 mb-3">
+            <div class="col-md-6">
+              <label class="form-label">First Name</label>
+              <input type="text" name="first_name" class="form-control" value="{{ user.first_name }}">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Last Name</label>
+              <input type="text" name="last_name" class="form-control" value="{{ user.last_name }}">
+            </div>
+          </div>
+          <div class="mb-4">
+            <label class="form-label">Bio</label>
+            {{ form.bio }}
+            <div class="form-text">Max 500 characters. HTML is stripped for security.</div>
+          </div>
+          <button type="submit" class="btn btn-primary px-4">Save Changes</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

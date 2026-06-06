@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block title %}Audit Log — SecureTask{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h1><i class="bi bi-journal-text me-2 text-primary"></i>Audit Log</h1>
+  <p>All security events — admin only view</p>
+</div>
+<div class="content-card">
+  <div class="content-card-header">
+    <h5>Security Events</h5>
+    <span class="badge bg-danger">Admin Only</span>
+  </div>
+  <div class="content-card-body">
+    <table class="table table-hover mb-0">
+      <thead class="table-light">
+        <tr>
+          <th>Timestamp</th>
+          <th>User</th>
+          <th>Action</th>
+          <th>Detail</th>
+          <th>IP Address</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for log in page_obj %}
+        <tr>
+          <td class="text-muted small">{{ log.timestamp|date:"M d H:i:s" }}</td>
+          <td>
+            {% if log.user %}
+              <span class="badge bg-secondary">{{ log.user.username }}</span>
+            {% else %}
+              <span class="text-muted">—</span>
+            {% endif %}
+          </td>
+          <td>
+            {% if "FAILED" in log.action %}
+              <span class="badge rounded-pill" style="background:#fef2f2;color:#dc2626;border:1px solid #fecaca">{{ log.action }}</span>
+            {% elif "LOGIN" == log.action %}
+              <span class="badge rounded-pill" style="background:#f0fdf4;color:#16a34a;border:1px solid #bbf7d0">{{ log.action }}</span>
+            {% elif "DELETE" in log.action %}
+              <span class="badge rounded-pill" style="background:#fef2f2;color:#dc2626;border:1px solid #fecaca">{{ log.action }}</span>
+            {% else %}
+              <span class="badge rounded-pill" style="background:#f0f9ff;color:#0369a1;border:1px solid #bae6fd">{{ log.action }}</span>
+            {% endif %}
+          </td>
+          <td class="small text-muted">{{ log.detail|default:"—"|truncatechars:60 }}</td>
+          <td class="small font-monospace">{{ log.ip_address|default:"—" }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="5" class="text-center text-muted py-4">No audit events yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Pagination -->
+{% if page_obj.has_other_pages %}
+<nav class="mt-3">
+  <ul class="pagination pagination-sm justify-content-end">
+    {% if page_obj.has_previous %}
+    <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a></li>
+    {% endif %}
+    <li class="page-item active"><a class="page-link" href="#">{{ page_obj.number }}</a></li>
+    {% if page_obj.has_next %}
+    <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a></li>
+    {% endif %}
+  </ul>
+</nav>
+{% endif %}
+{% endblock %}
